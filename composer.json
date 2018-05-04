@@ -1,0 +1,30 @@
+{
+    "name": "altelma/laravel-signrequest",
+    "description": "Send signrequest in Laravel'",
+    "type": "library",
+    "require": {
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ALTELMA",
+            "email": "nrohtgnohp@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Altelma\\LaravelSignRequest\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Altelma\\LaravelSignRequest\\SignRequestServiceProvider"
+            ],
+            "aliases": {
+                "SignRequest": "Altelma\\LaravelSignRequest\\SignRequestFacade"
+            }
+        }
+    }
+}
