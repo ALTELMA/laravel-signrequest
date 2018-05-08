@@ -207,7 +207,7 @@ class SignRequestService
         $settings = []
     ) {
         foreach ($recipients as &$r) {
-            if (!array_key_exists('language', $r)) {
+            if (! array_key_exists('language', $r)) {
                 $r['language'] = self::$defaultLanguage;
             }
         }
@@ -348,6 +348,6 @@ class SignRequestService
      */
     private function hasErrors($response)
     {
-        return !preg_match('/^20\d$/', $response->statusCode);
+        return ! preg_match('/^20\d$/', $response->statusCode);
     }
 }
