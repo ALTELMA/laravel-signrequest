@@ -4,20 +4,20 @@ namespace Altelma\LaravelSignRequest;
 
 use GuzzleHttp\Client;
 
-class SignRequestService {
-
+class SignRequestService
+{
     const API_BASEURL = 'https://[SUBDOMAIN]signrequest.com/api/v1';
 
     private $client;
     private $subdomain;
-    
+
     public function __construct($token, $subdomain = null)
     {
         $this->subdomain = $subdomain;
         $this->client = $client = new Client([
             'base_uri' => $this->getApiURL(),
-            'headers' => [
-                'Authorization' => 'Token '.$token
+            'headers'  => [
+                'Authorization' => 'Token '.$token,
             ],
         ]);
     }
@@ -25,9 +25,9 @@ class SignRequestService {
     /**
      * Gets templates from sign request frontend.
      *
-     * @return \stdClass response
-     *
      * @throws Exceptions\RequestException
+     *
+     * @return \stdClass response
      */
     public function getTemplates()
     {
@@ -38,18 +38,20 @@ class SignRequestService {
 
     /**
      * Send a document to SignRequest.
-     * @param string $file The absolute path to a file.
-     * @param string $identifier unique identifier for this file
+     *
+     * @param string $file        The absolute path to a file.
+     * @param string $identifier  unique identifier for this file
      * @param string $callbackUrl [optional] url to call when signing is completed
-     * @param string $filename [optional] the filename as the signer will see it
-     * @param array $settings [optional]
+     * @param string $filename    [optional] the filename as the signer will see it
+     * @param array  $settings    [optional]
+     *
      * @return \stdClass response
      */
     public function createDocument(
-        $file, 
-        $identifier = null, 
-        $callbackUrl = null, 
-        $filename = null, 
+        $file,
+        $identifier = null,
+        $callbackUrl = null,
+        $filename = null,
         $settings = []
     ) {
         $data = [
@@ -60,13 +62,13 @@ class SignRequestService {
                 ],
                 [
                     'name'     => 'external_id',
-                    'contents' => $identifier
+                    'contents' => $identifier,
                 ],
                 [
                     'name'     => 'events_callback_url',
-                    'contents' => $callbackUrl
+                    'contents' => $callbackUrl,
                 ],
-            ]
+            ],
         ];
 
         $data = array_merge($settings, $data);
@@ -77,33 +79,35 @@ class SignRequestService {
 
     /**
      * Send a document to SignRequest using the file_from_url option.
-     * @param string $url The URL of the page we want to sign.
+     *
+     * @param string $url         The URL of the page we want to sign.
      * @param string $identifier
      * @param string $callbackUrl
-     * @param array $settings [optional]
+     * @param array  $settings    [optional]
+     *
      * @return \stdClass response
      */
     public function createDocumentFromURL(
-        $url, 
-        $identifier = null, 
-        $callbackUrl = null, 
+        $url,
+        $identifier = null,
+        $callbackUrl = null,
         $settings = []
     ) {
         $data = [
             'multipart' => [
                 [
                     'name'     => 'file_from_url',
-                    'contents' => $url
+                    'contents' => $url,
                 ],
                 [
                     'name'     => 'external_id',
-                    'contents' => $identifier
+                    'contents' => $identifier,
                 ],
                 [
                     'name'     => 'events_callback_url',
-                    'contents' => $callbackUrl
+                    'contents' => $callbackUrl,
                 ],
-            ]
+            ],
         ];
 
         $data = array_merge($settings, $data);
@@ -115,33 +119,34 @@ class SignRequestService {
     /**
      * Send a document to SignRequest using the template option.
      *
-     * @param string $url the URL of the template we want to sign
+     * @param string $url         the URL of the template we want to sign
      * @param string $identifier
      * @param string $callbackUrl
-     * @param array $settings [optional]
+     * @param array  $settings    [optional]
+     *
      * @return \stdClass response
      */
     public function createDocumentFromTemplate(
-        $url, 
-        $identifier = null, 
-        $callbackUrl = null, 
+        $url,
+        $identifier = null,
+        $callbackUrl = null,
         $settings = []
     ) {
         $data = [
             'multipart' => [
                 [
                     'name'     => 'template',
-                    'contents' => $url
+                    'contents' => $url,
                 ],
                 [
                     'name'     => 'external_id',
-                    'contents' => $identifier
+                    'contents' => $identifier,
                 ],
                 [
                     'name'     => 'events_callback_url',
-                    'contents' => $callbackUrl
+                    'contents' => $callbackUrl,
                 ],
-            ]
+            ],
         ];
 
         $data = array_merge($settings, $data);
@@ -152,8 +157,10 @@ class SignRequestService {
 
     /**
      * Add attachment to document sent to SignRequest.
-     * @param string $file The absolute path to a file.
+     *
+     * @param string    $file     The absolute path to a file.
      * @param \stdClass $document
+     *
      * @return \stdClass response
      */
     public function addAttachmentToDocument($file, $document)
@@ -163,13 +170,13 @@ class SignRequestService {
             'multipart' => [
                 [
                     'name'     => 'file',
-                    'contents' => $file
+                    'contents' => $file,
                 ],
                 [
                     'name'     => 'document',
-                    'contents' => $document->url
+                    'contents' => $document->url,
                 ],
-            ]
+            ],
         ];
 
         $response = $this->newRequest('document-attachments', 'post', $data);
@@ -179,21 +186,24 @@ class SignRequestService {
 
     /**
      * Send a sign request for a created document.
-     * @param string $documentId uuid
-     * @param string $sender Senders e-mail address
-     * @param array $recipients
+     *
+     * @param string $documentId    uuid
+     * @param string $sender        Senders e-mail address
+     * @param array  $recipients
      * @param string $message
-     * @param bool $sendReminders Send automatic reminders
-     * @param array $settings Add additional request parameters or override defaults
-     * @return \stdClass The SignRequest
+     * @param bool   $sendReminders Send automatic reminders
+     * @param array  $settings      Add additional request parameters or override defaults
+     *
      * @throws Exceptions\SendSignRequestException
+     *
+     * @return \stdClass The SignRequest
      */
     public function sendSignRequest(
-        $documentId, 
-        $sender, 
-        $recipients, 
-        $message = null, 
-        $sendReminders = false, 
+        $documentId,
+        $sender,
+        $recipients,
+        $message = null,
+        $sendReminders = false,
         $settings = []
     ) {
         foreach ($recipients as &$r) {
@@ -203,42 +213,44 @@ class SignRequestService {
         }
 
         $data = array_merge([
-            "disable_text" => true,
-            "disable_attachments" => true,
-            "disable_date" => true,
+            'disable_text'        => true,
+            'disable_attachments' => true,
+            'disable_date'        => true,
         ], $settings, [
-            "document" => $this->getApiURL()."/documents/".$documentId."/",
-            "from_email" => $sender,
-            "message" => $message,
-            "signers" => $recipients,
-            "send_reminders" => $sendReminders
+            'document'       => $this->getApiURL().'/documents/'.$documentId.'/',
+            'from_email'     => $sender,
+            'message'        => $message,
+            'signers'        => $recipients,
+            'send_reminders' => $sendReminders,
         ]);
 
         $data = array_merge($data, [
             'headers' => [
-                'Content-Type' => 'application/json'
-            ]
+                'Content-Type' => 'application/json',
+            ],
         ]);
 
         $response = $this->newRequest('signrequests', 'post', $data);
-        
+
         return json_decode($response->getBody());
     }
 
     /**
      * Send a reminder to all recipients who have not signed yet.
+     *
      * @param string $signRequestId uuid
+     *
      * @return \stdClass response
      */
     public function sendSignRequestReminder($signRequestId)
     {
         $response = $this->newRequest(
-            'signrequests/'.$signRequestId.'/resend_signrequest_email', 
-            'post', 
+            'signrequests/'.$signRequestId.'/resend_signrequest_email',
+            'post',
             [
                 'headers' => [
-                    'Content-Type' => 'application/json'
-                ]
+                    'Content-Type' => 'application/json',
+                ],
             ]
         );
 
@@ -246,20 +258,23 @@ class SignRequestService {
     }
 
     /**
-     * Cancel an existing sign request
+     * Cancel an existing sign request.
+     *
      * @param string $signRequestId uuid
-     * @return mixed
+     *
      * @throws Exceptions\RemoteException
+     *
+     * @return mixed
      */
     public function cancelSignRequest($signRequestId)
     {
         $response = $this->newRequest(
-            'signrequests/'.$signRequestId.'/cancel_signrequest', 
-            'post', 
+            'signrequests/'.$signRequestId.'/cancel_signrequest',
+            'post',
             [
                 'headers' => [
-                    'Content-Type' => 'application/json'
-                ]
+                    'Content-Type' => 'application/json',
+                ],
             ]
         );
 
@@ -268,7 +283,9 @@ class SignRequestService {
 
     /**
      * Gets the current status for a sign request.
+     *
      * @param string $signRequestId uuid
+     *
      * @return \stdClass response
      */
     public function getSignRequestStatus($signRequestId)
@@ -280,7 +297,9 @@ class SignRequestService {
 
     /**
      * Get a file.
+     *
      * @param string $documentId uuid
+     *
      * @return \stdClass response
      */
     public function getDocument($documentId)
@@ -292,8 +311,10 @@ class SignRequestService {
 
     /**
      * Setup a base request object.
+     *
      * @param string $action
      * @param string $method post,put,get,delete,option
+     *
      * @return Request
      */
     private function newRequest($action, $method, $data = [])
@@ -315,12 +336,14 @@ class SignRequestService {
 
     private function getApiURL()
     {
-        return preg_replace('/\[SUBDOMAIN\]/', ltrim($this->subdomain . ".", "."), self::API_BASEURL);
+        return preg_replace('/\[SUBDOMAIN\]/', ltrim($this->subdomain.'.', '.'), self::API_BASEURL);
     }
 
     /**
      * Check for error in status headers.
+     *
      * @param Response $response
+     *
      * @return bool
      */
     private function hasErrors($response)

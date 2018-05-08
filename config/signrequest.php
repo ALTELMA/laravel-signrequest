@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'token' => '',
-    'subdomain' => ''
+    'token'     => '',
+    'subdomain' => '',
 ];
