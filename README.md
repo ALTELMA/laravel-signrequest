@@ -22,6 +22,21 @@ To publish the config file to `config/signrequest.php` run:
 php artisan vendor:publish --provider="Altelma\LaravelSignRequest\SignRequestServiceProvider"
 ```
 
+## Usage
+```php
+$file = 'http://www.example.com/example.pdf'
+$cdr = SignRequest::createDocumentFromURL($file);
+$sender = 'admin@example.com';
+$recipients = [
+            [
+                'email' => 'receiver@domain.com',
+                'from_email_name' => 'John Doe',
+            ],
+        ];
+$message = 'Hey, please sign this document.'; // optional
+$request = SignRequest::sendSignRequest($cdr->uuid, $sender, $recipients, $message);
+```
+
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
